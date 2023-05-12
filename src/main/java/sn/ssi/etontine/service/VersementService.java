@@ -1,11 +1,9 @@
 package sn.ssi.etontine.service;
-
 import org.springframework.stereotype.Service;
 import sn.ssi.etontine.model.Compte;
 import sn.ssi.etontine.model.Membre;
 import sn.ssi.etontine.repository.CompteRepository;
 import sn.ssi.etontine.repository.MembreRepository;
-
 import java.math.BigDecimal;
 
 
