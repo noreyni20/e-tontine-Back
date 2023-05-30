@@ -12,5 +12,8 @@ public enum ModeVersement {
     ORANGE_MONEY,
 
     @JsonProperty("Kpay")
-    KPAY
+    KPAY,
+
+    @JsonProperty("Speces")
+    SPECES
 }

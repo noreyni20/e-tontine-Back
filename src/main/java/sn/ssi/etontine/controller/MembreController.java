@@ -3,14 +3,24 @@ package sn.ssi.etontine.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sn.ssi.etontine.model.Compte;
 import sn.ssi.etontine.model.Membre;
 
+import sn.ssi.etontine.model.Versement;
+import sn.ssi.etontine.repository.CompteRepository;
 import sn.ssi.etontine.repository.MembreRepository;
 
+import sn.ssi.etontine.service.CompteService;
+import sn.ssi.etontine.service.MembreService;
+import sn.ssi.etontine.service.VersementService;
+
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,18 +29,17 @@ import java.util.Optional;
 @RequestMapping("/api/membre")
 public class MembreController {
 
-
-
     @Autowired
     MembreRepository membreRepository;
+
     @PostMapping("/nouveau")
-    public Membre membre(@RequestBody Membre membre){
+    public Membre membre(@RequestBody Membre membre) {
 
         return membreRepository.save(membre);
     }
 
     @GetMapping("/getById{id}")
-    public Optional<Membre> getById(@RequestBody Membre membre){
+    public Optional<Membre> getById(@RequestBody Membre membre) {
         return membreRepository.findById(membre.getId());
     }
 
@@ -40,31 +49,32 @@ public class MembreController {
     }
 
     @DeleteMapping("/supprimer")
-    public ResponseEntity<Object> delete(@RequestBody Membre membre){
+    public ResponseEntity<Object> delete(@RequestBody Membre membre) {
         membreRepository.deleteById(membre.getId());
         Optional<Membre> sms = membreRepository.findById(membre.getId());
-        if(sms.isPresent())
+        if (sms.isPresent())
             return generateRespose("Echec de suppression ", HttpStatus.BAD_REQUEST, membre);
         else
-            return generateRespose("Membre supprimée: "+membre.getId() , HttpStatus.OK, membre);
+            return generateRespose("Membre supprimée: " + membre.getId(), HttpStatus.OK, membre);
     }
 
-    public ResponseEntity<Object> generateRespose(String message, HttpStatus st , Object responseobj){
+    public ResponseEntity<Object> generateRespose(String message, HttpStatus st, Object responseobj) {
 
-        Map<String,Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("message", message);
         map.put("Status", st.value());
         map.put("data", responseobj);
 
-        return new ResponseEntity<Object> (map,st);
+        return new ResponseEntity<Object>(map, st);
     }
 
 
     @PutMapping("/update")
-    public Membre update(@RequestBody Membre membre)
-    {
+    public Membre update(@RequestBody Membre membre) {
+
         return membreRepository.save(membre);
     }
 
+    }
 
-}
+

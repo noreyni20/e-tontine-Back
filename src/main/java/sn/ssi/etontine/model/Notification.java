@@ -1,10 +1,13 @@
 package sn.ssi.etontine.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
+
+@Data
 @Entity
 public class Notification {
     @Id
@@ -13,6 +16,15 @@ public class Notification {
     private String contenu;
 
     private Date dateEnvoi;
+    private  String destinationSMSNumber;
+
+    public String getDestinationSMSNumber() {
+        return destinationSMSNumber;
+    }
+
+    public void setDestinationSMSNumber(String destinationSMSNumber) {
+        this.destinationSMSNumber = destinationSMSNumber;
+    }
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable (name = "Notification_membre")

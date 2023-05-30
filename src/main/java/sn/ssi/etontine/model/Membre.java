@@ -1,7 +1,11 @@
 package sn.ssi.etontine.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import java.util.List;
 
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 public class Membre {
     public List<Notification> getNotifications() {
@@ -16,9 +20,6 @@ public class Membre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
 
-
-
-
     private Long id;
     private String nom;
     private String prenom;
@@ -27,6 +28,59 @@ public class Membre {
     private String motDePasse;
     private String sexe;
     private String cni;
+    private Integer membreId;
+    private Boolean tire=false;
+
+    @Column(name = "mode_paiement")
+    private String modePaiement;
+
+    public Boolean getTire() {
+        return tire;
+    }
+
+    public void setTire(Boolean tire) {
+        this.tire = tire;
+    }
+
+    public String getModePaiement() {
+        return modePaiement;
+    }
+
+    public void setModePaiement(String modePaiement) {
+        this.modePaiement = modePaiement;
+    }
+
+    public boolean isTire() {
+        return tire != null ? tire : false;
+    }
+
+    public void setTire(boolean tire) {
+        this.tire = tire;
+    }
+
+    @OneToMany(mappedBy = "membre")
+    private List<Versement> historiqueVersements;
+
+    public List<Versement> getHistoriqueVersements() {
+        return historiqueVersements;
+    }
+
+    public void setHistoriqueVersements(List<Versement> historiqueVersements) {
+        this.historiqueVersements = historiqueVersements;
+    }
+
+    public Integer getMembreId() {
+        return membreId;
+    }
+
+    public void setMembreId(Integer membreId) {
+        this.membreId = membreId;
+    }
+
+    public Membre() {
+        // Constructeur par défaut sans arguments
+
+    }
 
     public String getSexe() {
         return sexe;
@@ -44,13 +98,7 @@ public class Membre {
         this.cni = cni;
     }
 
-    public List<Tontine> getTontines() {
-        return tontines;
-    }
 
-    public void setTontines(List<Tontine> tontines) {
-        this.tontines = tontines;
-    }
 
     public List<Versement> getVersements() {
         return versements;
@@ -61,9 +109,13 @@ public class Membre {
     }
 
     private String telephone;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable (name = "Membre_tontine")
-    private List<Tontine> tontines;
+    @ManyToOne
+    @JoinColumn(name = "tontine_id")
+    @JsonIgnoreProperties("membres")
+    private Tontine tontine;
+
+
+
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable (name = "Membre_versement")
@@ -73,8 +125,9 @@ public class Membre {
     @JoinTable (name = "Membre_tirage")
     private Tirage tirage;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable (name = "Membre_compte")
+    @OneToMany
+    @JoinTable (name = "compte_id")
+    @JsonIgnoreProperties("membres")
     private List<Compte> comptes;
 
 
@@ -87,6 +140,13 @@ public class Membre {
     private List<Notification> notifications;
 
 
+    public Tontine getTontine() {
+        return tontine;
+    }
+
+    public void setTontine(Tontine tontine) {
+        this.tontine = tontine;
+    }
 
     public Tirage getTirage() {
         return tirage;
@@ -112,7 +172,7 @@ public class Membre {
         this.role = role;
     }
 
-    public Membre (){
+    public Membre (Long membreId){
 
     }
 
@@ -184,4 +244,6 @@ public class Membre {
                 ", telephone='" + telephone + '\'' +
                 '}';
     }
+
+
 }

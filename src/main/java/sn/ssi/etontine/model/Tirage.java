@@ -2,6 +2,7 @@ package sn.ssi.etontine.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -10,14 +11,14 @@ public class Tirage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
-    private Date dateTirage;
+    private LocalDate dateTirage;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable (name = "tirage_membre")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "membre_id")
     private Membre membre;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable (name = "tirage_tontine")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tontine_id")
     private Tontine tontine;
 
     public Membre getMembre() {
@@ -44,11 +45,11 @@ public class Tirage {
         this.id = id;
     }
 
-    public Date getDateTirage() {
+    public LocalDate getDateTirage() {
         return dateTirage;
     }
 
-    public void setDateTirage(Date dateTirage) {
+    public void setDateTirage(LocalDate dateTirage) {
         this.dateTirage = dateTirage;
     }
 }

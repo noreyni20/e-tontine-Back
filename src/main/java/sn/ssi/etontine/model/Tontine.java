@@ -1,8 +1,11 @@
 package sn.ssi.etontine.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,15 +15,27 @@ public class Tontine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
 
+
+
     private Long id;
     private String libelle;
-    private Date dateCreation;
+    private LocalDateTime dateCreation;
     private Boolean status;
     private String frequence;
     private BigDecimal montant;
     private Date datePayement;
     private Date dateCloture;
     private Integer nombreParticipant;
+
+    private Integer tontineId;
+
+    public Integer getTontineId() {
+        return tontineId;
+    }
+
+    public void setTontineId(Integer tontineId) {
+        this.tontineId = tontineId;
+    }
 
     public Date getDatePayement() {
         return datePayement;
@@ -62,9 +77,30 @@ public class Tontine {
         this.versements = versements;
     }
 
-    @OneToMany (cascade = CascadeType.ALL)
-    @JoinTable (name = "Tontine_membre")
-    private List<Membre> membres;
+    public List<Compte> getComptes() {
+        return comptes;
+    }
+
+    public void setComptes(List<Compte> comptes) {
+        this.comptes = comptes;
+    }
+
+    @OneToMany(mappedBy = "tontine", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("tontine")
+    private List<Membre> membres = new ArrayList<>();
+
+    @OneToMany(mappedBy = "tontine", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tirage> tirages = new ArrayList<>();
+
+    public void addMembre(Membre membre) {
+        membres.add(membre);
+
+
+        membre.setTontine(this);
+
+
+    }
+
 
     @OneToMany (cascade = CascadeType.ALL)
     @JoinTable (name = "Tontine_versement")
@@ -78,9 +114,11 @@ public class Tontine {
         this.tirages = tirages;
     }
 
-    @OneToMany (cascade = CascadeType.ALL)
-    @JoinTable (name = "Tontine_tirage")
-    private List<Tirage> tirages;
+
+
+    @OneToMany(mappedBy = "tontine", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("tontine")
+    private List<Compte> comptes = new ArrayList<>();
 
 
     public Long getId() {
@@ -99,11 +137,11 @@ public class Tontine {
         this.libelle = libelle;
     }
 
-    public Date getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Date dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 

@@ -3,7 +3,9 @@ package sn.ssi.etontine.model;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -11,9 +13,18 @@ public class Versement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
     private BigDecimal montant;
+
     private String motif;
-    private Date dateVersement;
+    private LocalDateTime dateVersement;
+
+
+
+
+
+
 
     public Membre getMembre() {
         return membre;
@@ -32,15 +43,15 @@ public class Versement {
     }
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable (name = "versement_membre")
+    @JoinTable (name = "membre_id")
     private Membre membre;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinTable (name = "versement_tontine")
     private Tontine tontine;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable (name = "versement_compte")
+    @ManyToOne
+    @JoinColumn(name = "compte_id")
     private Compte compte;
 
     public Compte getCompte() {
@@ -54,12 +65,16 @@ public class Versement {
     @Enumerated(EnumType.STRING)
     private ModeVersement modeVersement;
 
+
+
     public ModeVersement getModeVersement() {
+
         return modeVersement;
     }
 
     public void setModeVersement(ModeVersement modeVersement) {
         this.modeVersement = modeVersement;
+
     }
 
     public Versement (){
@@ -92,11 +107,11 @@ public class Versement {
         this.motif = motif;
     }
 
-    public Date getDateVersement() {
+    public LocalDateTime getDateVersement() {
         return dateVersement;
     }
 
-    public void setDateVersement(Date dateVersement) {
+    public void setDateVersement(LocalDateTime dateVersement) {
         this.dateVersement = dateVersement;
     }
 
