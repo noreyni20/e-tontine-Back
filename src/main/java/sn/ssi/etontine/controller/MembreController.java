@@ -1,36 +1,46 @@
 package sn.ssi.etontine.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
-import sn.ssi.etontine.model.Compte;
+import sn.ssi.etontine.model.ConnexionRequest;
+import sn.ssi.etontine.model.InscriptionRequest;
 import sn.ssi.etontine.model.Membre;
-
-import sn.ssi.etontine.model.Versement;
-import sn.ssi.etontine.repository.CompteRepository;
+import sn.ssi.etontine.model.Tontine;
 import sn.ssi.etontine.repository.MembreRepository;
-
-import sn.ssi.etontine.service.CompteService;
 import sn.ssi.etontine.service.MembreService;
-import sn.ssi.etontine.service.VersementService;
+import sn.ssi.etontine.service.TelephoneNotFoundException;
 
-import java.math.BigDecimal;
+
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
+@CrossOrigin(origins = "*")
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @RestController
 @Slf4j
 @RequestMapping("/api/membre")
 public class MembreController {
 
     @Autowired
-    MembreRepository membreRepository;
+     private MembreRepository membreRepository;
+
+
+    private MembreService membreService;
+
+    public MembreController(MembreService membreService, MembreRepository membreRepository) {
+        this.membreService = membreService;
+        this.membreRepository = membreRepository;
+    }
 
     @PostMapping("/nouveau")
     public Membre membre(@RequestBody Membre membre) {
@@ -38,9 +48,9 @@ public class MembreController {
         return membreRepository.save(membre);
     }
 
-    @GetMapping("/getById{id}")
-    public Optional<Membre> getById(@RequestBody Membre membre) {
-        return membreRepository.findById(membre.getId());
+    @GetMapping("/getMembreById")
+    public Optional<Membre> getById(@RequestParam Long membreId){
+        return membreRepository.findById(membreId);
     }
 
     @GetMapping("/getAll")
@@ -48,24 +58,16 @@ public class MembreController {
         return membreRepository.findAll();
     }
 
-    @DeleteMapping("/supprimer")
-    public ResponseEntity<Object> delete(@RequestBody Membre membre) {
-        membreRepository.deleteById(membre.getId());
-        Optional<Membre> sms = membreRepository.findById(membre.getId());
-        if (sms.isPresent())
-            return generateRespose("Echec de suppression ", HttpStatus.BAD_REQUEST, membre);
-        else
-            return generateRespose("Membre supprimée: " + membre.getId(), HttpStatus.OK, membre);
+    @DeleteMapping("/supprimerMembre")
+    public ResponseEntity<String> supprimerMembre(@RequestParam Long membreId) {
+        membreService.supprimerMembre(membreId);
+        return ResponseEntity.ok("Membre supprimé avec succès.");
     }
 
-    public ResponseEntity<Object> generateRespose(String message, HttpStatus st, Object responseobj) {
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("message", message);
-        map.put("Status", st.value());
-        map.put("data", responseobj);
-
-        return new ResponseEntity<Object>(map, st);
+    @DeleteMapping("supprimerTous")
+    public ResponseEntity<String> supprimerTousLesMembres() {
+        membreService.supprimerTousLesMembres();
+        return ResponseEntity.ok("Tous les membres ont été supprimés avec succès.");
     }
 
 

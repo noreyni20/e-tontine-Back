@@ -1,57 +1,130 @@
 package sn.ssi.etontine.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
+
+
 public class Tontine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-
-
-
     private Long id;
     private String libelle;
-    private LocalDateTime dateCreation;
+    private LocalDate dateCreation = LocalDate.now();
+
+    private Double montantVersement;
+
+
+    private Double montantAmende;
+
+    private Date dateEcheance;
     private Boolean status;
-    private String frequence;
-    private BigDecimal montant;
-    private Date datePayement;
-    private Date dateCloture;
+    private Integer frequence;
+    private BigDecimal montantAuTirage;
+
     private Integer nombreParticipant;
+
+
+
+    public LocalDate getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(LocalDate dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public Double getMontantVersement() {
+        return montantVersement;
+    }
+
+    public void setMontantVersement(Double montantVersement) {
+        this.montantVersement = montantVersement;
+    }
+
+    public Double getMontantAmende() {
+        return montantAmende != null ? montantAmende : 0.0;
+    }
+
+    public void setMontantAmende(Double montantAmende) {
+        this.montantAmende = montantAmende;
+    }
+
+    public Date getDateEcheance() {
+        return dateEcheance;
+    }
+
+    public void setDateEcheance(Date dateEcheance) {
+        this.dateEcheance = dateEcheance;
+    }
+
+    @JsonIgnoreProperties("tontine")
+    @OneToMany(mappedBy = "tontine")
+
+    private List<Membre> membres;
 
     private Integer tontineId;
 
+    private BigDecimal comptePrincipal;
+
+    private LocalDate dateVersementPrevu;
+
+
+    public void ajouterVersement(Versement versement) {
+        // Add logic to process and store the versement
+        // You can access the Tontine's main account and update it with the versement amount
+        // You can also perform any necessary checks or calculations related to amende and payment mode
+        // Ensure the versement is recorded appropriately in the Tontine's data structure or database
+    }
+
+    public LocalDate getDateVersementPrevu() {
+        return dateVersementPrevu;
+    }
+
+    public void setDateVersementPrevu(LocalDate dateVersementPrevu) {
+        this.dateVersementPrevu = dateVersementPrevu;
+    }
+
+    public BigDecimal getComptePrincipal() {
+        return comptePrincipal;
+    }
+
+    public void setComptePrincipal(BigDecimal comptePrincipal) {
+        this.comptePrincipal = comptePrincipal;
+    }
+    @JsonIgnoreProperties("tontine")
+    @OneToMany(mappedBy = "tontine")
+
+    private List<Versement> versements;
+
+
     public Integer getTontineId() {
         return tontineId;
+    }
+
+    public List<Versement> getVersements() {
+        return versements;
+    }
+
+    public void setVersements(List<Versement> versements) {
+        this.versements = versements;
     }
 
     public void setTontineId(Integer tontineId) {
         this.tontineId = tontineId;
     }
 
-    public Date getDatePayement() {
-        return datePayement;
-    }
 
-    public void setDatePayement(Date datePayement) {
-        this.datePayement = datePayement;
-    }
-
-    public Date getDateCloture() {
-        return dateCloture;
-    }
-
-    public void setDateCloture(Date dateCloture) {
-        this.dateCloture = dateCloture;
-    }
 
     public Integer getNombreParticipant() {
         return nombreParticipant;
@@ -69,13 +142,7 @@ public class Tontine {
         this.membres = membres;
     }
 
-    public List<Versement> getVersements() {
-        return versements;
-    }
 
-    public void setVersements(List<Versement> versements) {
-        this.versements = versements;
-    }
 
     public List<Compte> getComptes() {
         return comptes;
@@ -85,9 +152,7 @@ public class Tontine {
         this.comptes = comptes;
     }
 
-    @OneToMany(mappedBy = "tontine", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("tontine")
-    private List<Membre> membres = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "tontine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tirage> tirages = new ArrayList<>();
@@ -102,9 +167,7 @@ public class Tontine {
     }
 
 
-    @OneToMany (cascade = CascadeType.ALL)
-    @JoinTable (name = "Tontine_versement")
-    private List<Versement> versements;
+
 
     public List<Tirage> getTirages() {
         return tirages;
@@ -137,13 +200,7 @@ public class Tontine {
         this.libelle = libelle;
     }
 
-    public LocalDateTime getDateCreation() {
-        return dateCreation;
-    }
 
-    public void setDateCreation(LocalDateTime dateCreation) {
-        this.dateCreation = dateCreation;
-    }
 
     public Boolean getStatus() {
         return status;
@@ -153,31 +210,21 @@ public class Tontine {
         this.status = status;
     }
 
-    public String getFrequence() {
+    public Integer getFrequence() {
         return frequence;
     }
 
-    public void setFrequence(String frequence) {
+    public void setFrequence(Integer frequence) {
         this.frequence = frequence;
     }
 
     public BigDecimal getMontant() {
-        return montant;
+        return montantAuTirage;
     }
 
     public void setMontant(BigDecimal montant) {
-        this.montant = montant;
+        this.montantAuTirage = montant;
     }
 
-    @Override
-    public String toString() {
-        return "Tontine{" +
-                "id=" + id +
-                ", libelle='" + libelle + '\'' +
-                ", dateCreation=" + dateCreation +
-                ", status=" + status +
-                ", frequence='" + frequence + '\'' +
-                ", montant=" + montant +
-                '}';
-    }
+
 }

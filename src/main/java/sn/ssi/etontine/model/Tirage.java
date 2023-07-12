@@ -14,11 +14,11 @@ public class Tirage {
     private LocalDate dateTirage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "membre_id")
+    @JoinTable (name = "Tirage_membre")
     private Membre membre;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tontine_id")
+    @JoinTable (name = "Tirage_tontine")
     private Tontine tontine;
 
     public Membre getMembre() {

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import sn.ssi.etontine.model.Membre;
 import sn.ssi.etontine.service.TirageService;
 
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/tontines/tirage")
 public class TirageController {

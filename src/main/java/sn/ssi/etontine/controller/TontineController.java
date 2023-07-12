@@ -5,18 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sn.ssi.etontine.model.Compte;
 import sn.ssi.etontine.model.Membre;
 import sn.ssi.etontine.model.Tontine;
 
 import sn.ssi.etontine.repository.TontineRepository;
 import sn.ssi.etontine.service.TontineService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
+import java.util.*;
+
+
+@CrossOrigin(origins = "*")
 @RestController
 @Slf4j
 public class TontineController {
@@ -29,29 +28,36 @@ public class TontineController {
     @Autowired
     TontineRepository tontineRepository;
     @PostMapping("/nouvelle_tontine")
-    public Tontine tontine(@RequestBody Tontine tontine){
+    public ResponseEntity<Tontine> createTontine(
+            @RequestBody Tontine tontine,
+            @RequestParam double montantVersement,
+            @RequestParam double montantAmende,
+            @RequestParam int frequence) {
 
-        return tontineRepository.save(tontine);
+        Tontine createdTontine = tontineService.createTontine(tontine, montantVersement, montantAmende, frequence);
+        return new ResponseEntity<>(createdTontine, HttpStatus.CREATED);
     }
 
     @GetMapping("/getById")
-    public Optional<Tontine> getById(@RequestBody Tontine tontine){
-        return tontineRepository.findById(tontine.getId());
+    public Optional<Tontine> getById(@RequestParam Long tontineId){
+        return tontineRepository.findById(tontineId);
     }
 
     @GetMapping("/getAllTontine")
-    public Iterable<Tontine> getAll() {
-        return tontineRepository.findAll();
+
+    public ResponseEntity<List<Tontine>> getAllTontines() {
+        List<Tontine> tontines = tontineService.getAllTontines();
+        return new ResponseEntity<>(tontines, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Object> delete(@RequestBody Tontine tontine){
-        tontineRepository.deleteById(tontine.getId());
-        Optional<Tontine> sms = tontineRepository.findById(tontine.getId());
+    public ResponseEntity<Object> delete(@RequestParam Long tontineId){
+        tontineRepository.deleteById(tontineId);
+        Optional<Tontine> sms = tontineRepository.findById(tontineId);
         if(sms.isPresent())
-            return generateRespose("Echec de suppression ", HttpStatus.BAD_REQUEST, tontine);
+            return generateRespose("Echec de suppression ", HttpStatus.BAD_REQUEST, tontineId);
         else
-            return generateRespose("Tontine supprimée: "+tontine.getId() , HttpStatus.OK, tontine);
+            return generateRespose("Tontine supprimée: "+tontineId , HttpStatus.OK, tontineId);
     }
 
     public ResponseEntity<Object> generateRespose(String message, HttpStatus st , Object responseobj){
@@ -64,7 +70,7 @@ public class TontineController {
         return new ResponseEntity<Object> (map,st);
     }
 
-    //creating put mapping that updates the book detail
+
     @PutMapping("/updateTontine")
     public Tontine update(@RequestBody Tontine tontine)
     {
@@ -77,11 +83,11 @@ public class TontineController {
     public ResponseEntity<String> addMembreToTontine(@RequestParam("membreId") Membre membre,
                                                      @RequestParam("tontineId") Long tontineId)  {
         if (!tontineService.doesTontineExist(tontineId)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok("Tontine introuvable");
         }
 
         if (!tontineService.doesMembreExist(membre.getId())) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok("Membre introuvable.");
         }
 
 
@@ -108,11 +114,15 @@ public class TontineController {
         return ResponseEntity.ok(membresTires);
     }
 
-    @GetMapping("tontineId/nombre-membres-restants")
-    public ResponseEntity<Integer> getNombreMembresRestants(@RequestParam("tontineId") Long tontineId) {
-        int nombreMembresRestants = tontineService.getNombreMembresRestants(tontineId);
-        return ResponseEntity.ok(nombreMembresRestants);
+    @GetMapping("tontineId/membres-restants")
+    public ResponseEntity<List<Membre>> getMembresRestants(@RequestParam("tontineId") Long tontineId) {
+        List<Membre>  MembresRestants = tontineService.getMembresRestants(tontineId);
+        return ResponseEntity.ok(MembresRestants);
     }
+
+
+
+
 
 }
 

@@ -1,17 +1,31 @@
 package sn.ssi.etontine.model;
 
-import lombok.AllArgsConstructor;
+
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.List;
+
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class WhatsAppMessage {
-
-
-    private String phoneNumber;
+@Entity
+public class WhatsAppMessage  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String message;
+
+    private Date dateEnvoi;
+    private  String phoneNumber;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -21,12 +35,36 @@ public class WhatsAppMessage {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getMessage() {
-        return message;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable (name = "Notification_membre")
+
+    private List<Membre> membres;
+
+
+    public Long getId() {
+        return id;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+
+    public Date getDateEnvoi() {
+        return dateEnvoi;
+    }
+
+    public void setDateEnvoi(Date dateEnvoi) {
+        this.dateEnvoi = dateEnvoi;
+    }
+
+    public List<Membre> getMembres() {
+        return membres;
+    }
+
+    public void setMembres(List<Membre> membres) {
+        this.membres = membres;
     }
 }
 

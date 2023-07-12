@@ -15,6 +15,7 @@ public interface MembreRepository extends JpaRepository<Membre,Long> {
     List<Membre> findByTontineId(Long tontineId);
     List<Membre> findByTontineIdAndTireFalse(Long tontineId);
     List<Membre> findByTontineIdAndTireTrue(Long tontineId);
+    Membre findByTelephone(String telephone);
 
 
 

@@ -4,14 +4,10 @@ package sn.ssi.etontine.service;
 import org.springframework.stereotype.Service;
 import sn.ssi.etontine.model.Compte;
 import sn.ssi.etontine.model.Membre;
-import sn.ssi.etontine.model.Versement;
 import sn.ssi.etontine.repository.CompteRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CompteService {
@@ -37,6 +33,8 @@ public class CompteService {
         }
         throw new IllegalArgumentException("Le membre n'a pas de compte associé.");
     }
+
+
 
 
 

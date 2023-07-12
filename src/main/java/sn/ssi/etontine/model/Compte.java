@@ -1,5 +1,6 @@
 package sn.ssi.etontine.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -22,14 +23,29 @@ public class Compte {
 
     private  Integer compteId;
 
+    private BigDecimal montantPrincipal;
 
 
 
+    public BigDecimal getMontantPrincipal() {
+        return montantPrincipal;
+    }
 
+    public void setMontantPrincipal(BigDecimal montantPrincipal) {
+        this.montantPrincipal = montantPrincipal;
+    }
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable (name = "compte_membre")
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "membre_id")
     private Membre membre;
+
+    @ManyToOne
+    @JoinColumn(name = "Compte_tontine")
+    private Tontine tontine;
+
+
+
 
     public Integer getCompteId() {
         return compteId;
@@ -47,23 +63,9 @@ public class Compte {
         this.tontine = tontine;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "tontine_id")
-    @JsonIgnoreProperties("comptes")
-    private Tontine tontine;
 
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="compte_versement")
-    private List<Versement> versements;
 
-    public List<Versement> getVersements() {
-        return versements;
-    }
-
-    public void setVersements(List<Versement> versements) {
-        this.versements = versements;
-    }
 
     public Membre getMembre() {
         return membre;

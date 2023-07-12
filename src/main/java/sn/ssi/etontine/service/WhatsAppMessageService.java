@@ -6,17 +6,17 @@ import sn.ssi.etontine.repository.WhatsAppMessageRepository;
 
 @Service
 public class WhatsAppMessageService {
-    private final WhatsAppMessageRepository messageRepository;
+    private final WhatsAppMessageRepository whatsAppMessageRepository ;
     private final WhatsAppClient whatsappClient;
 
-    public WhatsAppMessageService(WhatsAppMessageRepository messageRepository, WhatsAppClient whatsappClient) {
-        this.messageRepository = messageRepository;
+    public WhatsAppMessageService(WhatsAppMessageRepository whatsAppMessageRepository, WhatsAppClient whatsappClient) {
+        this.whatsAppMessageRepository = whatsAppMessageRepository;
         this.whatsappClient = whatsappClient;
     }
 
     public void envoyerNotificationWhatsApp(String phoneNumber, String message) {
-        WhatsAppMessage whatsappMessage = new WhatsAppMessage(phoneNumber, message);
-        messageRepository.save(whatsappMessage);
+        WhatsAppMessage whatsappMessage = new WhatsAppMessage();
+        whatsAppMessageRepository.save(whatsappMessage);
 
         whatsappClient.envoyerMessageWhatsApp(phoneNumber, message);
     }

@@ -5,14 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sn.ssi.etontine.model.Compte;
-import sn.ssi.etontine.model.Versement;
 import sn.ssi.etontine.repository.CompteRepository;
 import sn.ssi.etontine.service.CompteService;
-import sn.ssi.etontine.service.VersementService;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+
+@CrossOrigin(origins = "*")
 @RestController
 @Slf4j
 @RequestMapping("/compte")

@@ -1,15 +1,15 @@
 package sn.ssi.etontine.service;
 
 import org.springframework.stereotype.Service;
-import sn.ssi.etontine.model.Membre;
-import sn.ssi.etontine.model.Tontine;
+import sn.ssi.etontine.model.*;
+import sn.ssi.etontine.repository.CompteTontineRepository;
 import sn.ssi.etontine.repository.MembreRepository;
 import sn.ssi.etontine.repository.TontineRepository;
+import sn.ssi.etontine.repository.VersementRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.*;
 
 
 @Service
@@ -17,9 +17,21 @@ public class TontineService {
     private final TontineRepository tontineRepository;
     private final MembreRepository membreRepository;
 
-    public TontineService(TontineRepository tontineRepository, MembreRepository membreRepository) {
+    private final PaymentService paymentService;
+
+    private final CompteTontineRepository compteTontineRepository;
+    private final VersementRepository versementRepository;
+
+    public TontineService(TontineRepository tontineRepository, MembreRepository membreRepository, PaymentService paymentService, CompteTontineRepository compteTontineRepository,
+    VersementRepository versementRepository) {
         this.tontineRepository = tontineRepository;
         this.membreRepository = membreRepository;
+
+        this.paymentService = paymentService;
+        this.compteTontineRepository=compteTontineRepository;
+        this.versementRepository=versementRepository;
+
+
     }
 
     public boolean doesTontineExist(Long tontineId) {
@@ -28,6 +40,14 @@ public class TontineService {
 
     public boolean doesMembreExist(Long membreId) {
         return membreRepository.existsById(membreId);
+    }
+
+    public Tontine createTontine(Tontine tontine, double montantVersement, double montantAmende, int frequence) {
+        tontine.setMontantVersement(montantVersement);
+        tontine.setMontantAmende(montantAmende);
+        tontine.setFrequence(frequence);
+
+        return tontineRepository.save(tontine);
     }
 
     public void addMembreToTontine(Long tontineId, Membre membre) {
@@ -49,6 +69,10 @@ public class TontineService {
         return Collections.emptyList();
     }
 
+    public List<Tontine> getAllTontines() {
+        return tontineRepository.findAll();
+    }
+
     public void effectuerTirage(Long tontineId) {
         // Récupérer la tontine par son ID
         Tontine tontine = tontineRepository.findById(tontineId)
@@ -63,7 +87,7 @@ public class TontineService {
             return;
         }
 
-        // Effectuer le tirage (ex: tirage aléatoire)
+
         Random random = new Random();
         Membre membreTire = membresNonTires.get(random.nextInt(membresNonTires.size()));
 
@@ -71,7 +95,7 @@ public class TontineService {
         membreTire.setTire(true);
         membreRepository.save(membreTire);
 
-        System.out.println("Membre tiré : " + membreTire.getPrenom());
+        System.out.println("Membre tiré : " + membreTire.getPrenom() + " "+membreTire.getNom());
 
 
     }
@@ -81,10 +105,15 @@ public class TontineService {
         return membreRepository.findByTontineIdAndTireTrue(tontineId);
     }
 
-    public int getNombreMembresRestants(Long tontineId) {
-        List<Membre> membresNonTires = membreRepository.findByTontineIdAndTireFalse(tontineId);
-        return membresNonTires.size();
+    public List<Membre> getMembresRestants(Long tontineId) {
+        return membreRepository.findByTontineIdAndTireFalse(tontineId);
+
     }
+
+
+
+
+
 
 
 

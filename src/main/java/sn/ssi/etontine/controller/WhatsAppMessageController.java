@@ -1,5 +1,6 @@
 package sn.ssi.etontine.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,8 @@ import sn.ssi.etontine.service.WhatsAppMessageService;
 public class WhatsAppMessageController {
     private final WhatsAppMessageService messageService;
 
+
+    @Autowired
     public WhatsAppMessageController(WhatsAppMessageService messageService) {
         this.messageService = messageService;
     }
